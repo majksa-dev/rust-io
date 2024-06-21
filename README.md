@@ -1,8 +1,8 @@
-# rust-lib
+# Rust IO utils
 
-rust-lib description
+Rust IO utils to be used with std or tokio.
 
-[Crate API Documentation](https://majksa-dev.github.io/rust-lib/)
+[Crate API Documentation](https://majksa-dev.github.io/rust-io/)
 
 **Table of contents**
 
@@ -10,15 +10,15 @@ rust-lib description
 
 ### Installation
 
-To use `rust-lib`, add the following to your Cargo.toml:
+To use `rust-io`, add the following to your Cargo.toml:
 
 <!-- x-release-please-start-version -->
 
 ```toml
 [dependencies]
-rust-lib = { tag = "0.0.1", git = "https://github.com/majksa-dev/rust-lib" }
+io = { tag = "0.0.1", git = "https://github.com/majksa-dev/rust-io" }
 ```
 
-or simply run `cargo add --git https://github.com/majksa-dev/rust-lib --tag 0.0.1`
+or simply run `cargo add --git https://github.com/majksa-dev/rust-io --tag 0.0.1`
 
 <!-- x-release-please-end -->
