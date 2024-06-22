@@ -2,6 +2,7 @@ use libc::{c_int, O_NONBLOCK};
 use std::net::SocketAddr;
 use std::os::fd::RawFd;
 use std::os::unix::prelude::AsRawFd;
+use std::ptr;
 use tokio::{
     fs::File,
     io::{self, AsyncReadExt, AsyncWriteExt},
