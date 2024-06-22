@@ -6,6 +6,8 @@ use tokio::{
     net::tcp::OwnedWriteHalf,
 };
 
+const BUFFERSIZE: usize = 0x10000; // 64k pipe buffer
+
 /// Copy data from a file to a write half.
 /// This function is only available on linux platforms and uses sendfile.
 pub async fn copy<'a>(r: &'a mut File, w: &'a mut OwnedWriteHalf) -> io::Result<usize> {
@@ -18,7 +20,7 @@ pub async fn copy<'a>(r: &'a mut File, w: &'a mut OwnedWriteHalf) -> io::Result<
     let mut n: usize = 0;
     loop {
         w.as_ref().writable().await?;
-        match unsafe { libc::sendfile(wfd, rfd, ptr::null_mut(), usize::MAX) } {
+        match unsafe { libc::sendfile(wfd, rfd, ptr::null_mut(), BUFFERSIZE) } {
             x if x > 0 => n += x as usize,
             0 => {
                 break;

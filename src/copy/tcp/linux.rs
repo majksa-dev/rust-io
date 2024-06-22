@@ -5,11 +5,7 @@ use tokio::{
     net::tcp::{OwnedReadHalf, OwnedWriteHalf},
 };
 
-const BUFFERSIZE: usize = if cfg!(not(target_os = "linux")) {
-    0x4000 // 16k read/write buffer
-} else {
-    0x10000 // 64k pipe buffer
-};
+const BUFFERSIZE: usize = 0x10000; // 64k pipe buffer
 
 /// Copy data from a read half to a write half.
 /// This function is only available on linux platforms and uses splice.
