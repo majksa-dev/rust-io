@@ -14,7 +14,12 @@ const BUFFERSIZE: usize = if cfg!(not(target_os = "linux")) {
     0x10000 // 64k pipe buffer
 };
 
+/// Copy data from a read half to a write half.
+/// This function is only available on linux platforms and uses splice.
 pub async fn copy<'a>(rfd: &'a mut OwnedReadHalf, wfd: &'a mut OwnedWriteHalf) -> io::Result<()> {
+    use essentials::debug;
+
+    debug!("copying tcp stream using splice");
     // create pipe
     let mut pipes = std::mem::MaybeUninit::<[c_int; 2]>::uninit();
     let (rpipe, wpipe) = unsafe {
