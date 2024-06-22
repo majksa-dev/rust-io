@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/majksa-dev/rust-io/compare/v0.2.1...v0.2.2) (2024-06-22)
+
+
+### Bug Fixes
+
+* synchronize copy_file return type ([cb7cee0](https://github.com/majksa-dev/rust-io/commit/cb7cee0bbe7214960948d8aa766bb8306cc60684))
+
 ## [0.2.1](https://github.com/majksa-dev/rust-io/compare/v0.2.0...v0.2.1) (2024-06-22)
 
 
