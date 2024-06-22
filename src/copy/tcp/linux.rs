@@ -1,5 +1,5 @@
 use libc::{c_int, O_NONBLOCK};
-use std::os::unix::prelude::AsRawFd;
+use std::{os::unix::prelude::AsRawFd, ptr};
 use tokio::{
     io,
     net::tcp::{OwnedReadHalf, OwnedWriteHalf},
@@ -38,7 +38,7 @@ pub async fn copy<'a>(r: &'a mut OwnedReadHalf, w: &'a mut OwnedWriteHalf) -> io
         while n < BUFFERSIZE {
             match splice_n(rfd, wpipe, BUFFERSIZE - n) {
                 x if x > 0 => n += x as usize,
-                x if x == 0 => {
+                0 => {
                     done = true;
                     break;
                 }
@@ -78,9 +78,9 @@ fn splice_n(r: i32, w: i32, n: usize) -> isize {
     unsafe {
         libc::splice(
             r,
-            0 as *mut loff_t,
+            ptr::null_mut(),
             w,
-            0 as *mut loff_t,
+            ptr::null_mut(),
             n,
             SPLICE_F_MOVE | SPLICE_F_NONBLOCK,
         )
