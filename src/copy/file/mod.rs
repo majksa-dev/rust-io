@@ -2,7 +2,7 @@
 mod linux;
 
 #[cfg(target_os = "linux")]
-pub use linux::copy_tcp;
+pub use linux::copy;
 
 #[cfg(not(target_os = "linux"))]
 use tokio::{fs::File, io, net::tcp::OwnedWriteHalf};

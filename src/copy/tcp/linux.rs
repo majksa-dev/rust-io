@@ -1,22 +1,15 @@
 use libc::{c_int, O_NONBLOCK};
-use std::net::SocketAddr;
-use std::os::fd::RawFd;
-use std::os::unix::prelude::AsRawFd;
-use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
-use tokio::net::{
-    tcp::{OwnedReadHalf, OwnedWriteHalf},
-    TcpListener, TcpStream,
+use std::{os::unix::prelude::AsRawFd, ptr};
+use tokio::{
+    io,
+    net::tcp::{OwnedReadHalf, OwnedWriteHalf},
 };
 
-const BUFFERSIZE: usize = if cfg!(not(target_os = "linux")) {
-    0x4000 // 16k read/write buffer
-} else {
-    0x10000 // 64k pipe buffer
-};
+const BUFFERSIZE: usize = 0x10000; // 64k pipe buffer
 
 /// Copy data from a read half to a write half.
 /// This function is only available on linux platforms and uses splice.
-pub async fn copy<'a>(rfd: &'a mut OwnedReadHalf, wfd: &'a mut OwnedWriteHalf) -> io::Result<()> {
+pub async fn copy<'a>(r: &'a mut OwnedReadHalf, w: &'a mut OwnedWriteHalf) -> io::Result<()> {
     use essentials::debug;
 
     debug!("copying tcp stream using splice");
@@ -41,7 +34,7 @@ pub async fn copy<'a>(rfd: &'a mut OwnedReadHalf, wfd: &'a mut OwnedWriteHalf) -
         while n < BUFFERSIZE {
             match splice_n(rfd, wpipe, BUFFERSIZE - n) {
                 x if x > 0 => n += x as usize,
-                x if x == 0 => {
+                0 => {
                     done = true;
                     break;
                 }
@@ -77,13 +70,13 @@ pub async fn copy<'a>(rfd: &'a mut OwnedReadHalf, wfd: &'a mut OwnedWriteHalf) -
 }
 
 fn splice_n(r: i32, w: i32, n: usize) -> isize {
-    use libc::{loff_t, SPLICE_F_MOVE, SPLICE_F_NONBLOCK};
+    use libc::{SPLICE_F_MOVE, SPLICE_F_NONBLOCK};
     unsafe {
         libc::splice(
             r,
-            0 as *mut loff_t,
+            ptr::null_mut(),
             w,
-            0 as *mut loff_t,
+            ptr::null_mut(),
             n,
             SPLICE_F_MOVE | SPLICE_F_NONBLOCK,
         )
