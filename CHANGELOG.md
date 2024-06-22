@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/majksa-dev/rust-io/compare/v0.2.0...v0.2.1) (2024-06-22)
+
+
+### Bug Fixes
+
+* sendfile and splice linux implementation with tests ([#4](https://github.com/majksa-dev/rust-io/issues/4)) ([7ca594d](https://github.com/majksa-dev/rust-io/commit/7ca594ded53de897bbfcaebd270b0cff52fe7000))
+
 ## [0.2.0](https://github.com/majksa-dev/rust-io/compare/v0.1.1...v0.2.0) (2024-06-22)
 
 
