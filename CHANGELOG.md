@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/majksa-dev/rust-io/compare/v0.1.1...v0.2.0) (2024-06-22)
+
+
+### Features
+
+* add sendfile implementation ([4e6b1ad](https://github.com/majksa-dev/rust-io/commit/4e6b1adb114493db04aa7bfd8b7088314c65fd24))
+
 ## [0.1.1](https://github.com/majksa-dev/rust-io/compare/v0.1.0...v0.1.1) (2024-06-21)
 
 
