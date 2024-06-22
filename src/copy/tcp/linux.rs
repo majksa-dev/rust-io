@@ -1,6 +1,3 @@
-use libc::{c_int, O_NONBLOCK};
-use std::net::SocketAddr;
-use std::os::fd::RawFd;
 use std::os::unix::prelude::AsRawFd;
 use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
 use tokio::net::{
