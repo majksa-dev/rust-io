@@ -25,11 +25,10 @@ pub async fn copy<'a>(r: &'a mut File, w: &'a mut OwnedWriteHalf) -> io::Result<
 
     debug!("copying file to tcp stream using sendfile");
     // create pipe
-    let rfd = r.as_ref().as_raw_fd();
+    let rfd = r.as_raw_fd();
     let wfd = w.as_ref().as_raw_fd();
     let mut n: usize = 0;
     loop {
-        r.as_ref().readable().await?;
         w.as_ref().writable().await?;
         match unsafe { libc::sendfile(rfd, wfd, ptr::null_mut(), usize::MAX) } {
             x if x > 0 => n += x as usize,
@@ -40,7 +39,7 @@ pub async fn copy<'a>(r: &'a mut File, w: &'a mut OwnedWriteHalf) -> io::Result<
             _ => return Err(io::Error::last_os_error()),
         }
         // clear readiness (EPOLLIN)
-        let _ = r.as_ref().try_read(&mut [0u8; 0]);
+        let _ = r.read(&mut [0u8; 0]).await;
     }
     Ok(n)
 }
