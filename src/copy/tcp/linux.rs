@@ -16,7 +16,7 @@ const BUFFERSIZE: usize = if cfg!(not(target_os = "linux")) {
 
 /// Copy data from a read half to a write half.
 /// This function is only available on linux platforms and uses splice.
-pub async fn copy<'a>(rfd: &'a mut OwnedReadHalf, wfd: &'a mut OwnedWriteHalf) -> io::Result<()> {
+pub async fn copy<'a>(r: &'a mut OwnedReadHalf, w: &'a mut OwnedWriteHalf) -> io::Result<()> {
     use essentials::debug;
 
     debug!("copying tcp stream using splice");
