@@ -74,7 +74,7 @@ pub async fn copy<'a>(r: &'a mut OwnedReadHalf, w: &'a mut OwnedWriteHalf) -> io
 }
 
 fn splice_n(r: i32, w: i32, n: usize) -> isize {
-    use libc::{loff_t, SPLICE_F_MOVE, SPLICE_F_NONBLOCK};
+    use libc::{SPLICE_F_MOVE, SPLICE_F_NONBLOCK};
     unsafe {
         libc::splice(
             r,
