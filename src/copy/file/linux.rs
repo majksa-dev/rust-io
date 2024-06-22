@@ -2,11 +2,8 @@ use std::os::unix::prelude::AsRawFd;
 use std::ptr;
 use tokio::{
     fs::File,
-    io::{self, AsyncReadExt, AsyncWriteExt},
-    net::{
-        tcp::{OwnedReadHalf, OwnedWriteHalf},
-        TcpListener, TcpStream,
-    },
+    io::{self, AsyncReadExt},
+    net::tcp::OwnedWriteHalf,
 };
 
 const BUFFERSIZE: usize = if cfg!(not(target_os = "linux")) {

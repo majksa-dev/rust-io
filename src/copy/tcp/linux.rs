@@ -1,8 +1,8 @@
+use libc::{c_int, O_NONBLOCK};
 use std::os::unix::prelude::AsRawFd;
-use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
-use tokio::net::{
-    tcp::{OwnedReadHalf, OwnedWriteHalf},
-    TcpListener, TcpStream,
+use tokio::{
+    io,
+    net::tcp::{OwnedReadHalf, OwnedWriteHalf},
 };
 
 const BUFFERSIZE: usize = if cfg!(not(target_os = "linux")) {
