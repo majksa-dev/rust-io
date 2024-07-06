@@ -76,7 +76,7 @@ pub async fn copy<'a>(r: &'a mut OwnedReadHalf, w: &'a mut OwnedWriteHalf) -> io
 pub async fn copy_exact<'a>(
     r: &'a mut OwnedReadHalf,
     w: &'a mut OwnedWriteHalf,
-    length: usize,
+    mut length: usize,
 ) -> io::Result<usize> {
     use essentials::debug;
 
@@ -96,12 +96,12 @@ pub async fn copy_exact<'a>(
     let mut n: usize = 0;
     let mut done = false;
 
-    'LOOP: while length > total {
+    'LOOP: while length > 0 {
         // read until the socket buffer is empty
         // or the pipe is filled
         r.as_ref().readable().await?;
-        while n < BUFFERSIZE {
-            match splice_n(rfd, wpipe, std::cmp::min(BUFFERSIZE - n, length - total)) {
+        while n < BUFFERSIZE && n < length {
+            match splice_n(rfd, wpipe, std::cmp::min(BUFFERSIZE - n, length)) {
                 x if x > 0 => n += x as usize,
                 0 => {
                     done = true;
@@ -112,6 +112,7 @@ pub async fn copy_exact<'a>(
             }
         }
         total += n;
+        length -= n;
         // write until the pipe is empty
         while n > 0 {
             w.as_ref().writable().await?;
