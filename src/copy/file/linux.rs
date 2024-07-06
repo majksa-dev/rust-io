@@ -18,7 +18,7 @@ pub async fn copy<'a>(r: &'a mut File, w: &'a mut OwnedWriteHalf) -> io::Result<
     let mut n: usize = 0;
     loop {
         w.as_ref().writable().await?;
-        match sendfile_n(usize::MAX) {
+        match sendfile_n(rfd, wfd, usize::MAX) {
             x if x > 0 => n += x as usize,
             0 => {
                 break;
@@ -48,7 +48,7 @@ pub async fn copy_exact<'a>(
     let mut n: usize = 0;
     while length > n {
         w.as_ref().writable().await?;
-        match sendfile_n(length) {
+        match sendfile_n(rfd, wfd, length) {
             x if x > 0 => n += x as usize,
             0 => {
                 break;
