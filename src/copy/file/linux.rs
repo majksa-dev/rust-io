@@ -63,7 +63,7 @@ pub async fn copy_exact<'a>(
 }
 
 fn sendfile_n(r: i32, w: i32, n: usize) -> isize {
-    unsafe { libc::sendfile(wfd, rfd, ptr::null_mut(), n) }
+    unsafe { libc::sendfile(w, r, ptr::null_mut(), n) }
 }
 
 fn is_wouldblock() -> bool {
