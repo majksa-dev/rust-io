@@ -101,7 +101,7 @@ pub async fn copy_exact<'a>(
         // or the pipe is filled
         r.as_ref().readable().await?;
         while n < BUFFERSIZE {
-            match splice_n(rfd, wpipe, length.min(BUFFERSIZE - n)) {
+            match splice_n(rfd, wpipe, std::cmp::min(BUFFERSIZE - n, length - total)) {
                 x if x > 0 => n += x as usize,
                 0 => {
                     done = true;
