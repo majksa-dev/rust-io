@@ -6,6 +6,8 @@ use tokio::{
     net::tcp::OwnedWriteHalf,
 };
 
+const SENFILE_MAX: usize = 0x7ffff000; // 2GB
+
 /// Copy data from a file to a write half.
 /// This function is only available on linux platforms and uses sendfile.
 pub async fn copy<'a>(r: &'a mut File, w: &'a mut OwnedWriteHalf) -> io::Result<usize> {
@@ -18,7 +20,7 @@ pub async fn copy<'a>(r: &'a mut File, w: &'a mut OwnedWriteHalf) -> io::Result<
     let mut n: usize = 0;
     loop {
         w.as_ref().writable().await?;
-        match sendfile_n(rfd, wfd, usize::MAX) {
+        match sendfile_n(rfd, wfd, SENFILE_MAX) {
             x if x > 0 => n += x as usize,
             0 => {
                 break;
