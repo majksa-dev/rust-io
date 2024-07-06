@@ -4,6 +4,9 @@ mod linux;
 #[cfg(target_os = "linux")]
 pub use linux::copy;
 
+#[cfg(target_os = "linux")]
+pub use linux::copy_exact;
+
 #[cfg(not(target_os = "linux"))]
 use tokio::{
     io,
