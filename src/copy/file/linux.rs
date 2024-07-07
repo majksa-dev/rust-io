@@ -11,7 +11,7 @@ use tokio::{
     net::tcp::OwnedWriteHalf,
 };
 
-pub const MAX_LENGTH: usize = off_t::max_value() as usize;
+pub const MAX_LENGTH: usize = off_t::MAX as usize;
 pub const MAX_CHUNK: usize = 0x7ffff000; // according to the Linux docs, 0x7ffff000 is the maximum length for one sendfile()
 
 pub struct SendFile {
@@ -48,7 +48,7 @@ impl Future for SendFile {
     fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         loop {
             match self.raw_send_file() {
-                Ok(0) => break Poll::Ready(Ok(self.copied as usize)),
+                Ok(0) => break Poll::Ready(Ok(self.copied)),
                 Ok(_) => continue, // Attempt to write some more bytes.
                 Err(ref err) if err.kind() == io::ErrorKind::WouldBlock => {
                     cx.waker().wake_by_ref();
