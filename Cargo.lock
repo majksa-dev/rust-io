@@ -281,6 +281,7 @@ dependencies = [
  "futures-util",
  "libc",
  "rand",
+ "sendfile",
  "serde",
  "serde_json",
  "slab",
@@ -595,6 +596,16 @@ name = "semver"
 version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "61697e0a1c7e512e84a621326239844a24d8207b4669b41bc18b32ea5cbf988b"
+
+[[package]]
+name = "sendfile"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d64d429eab67399587c3737a2da1fb9e635b85d355b495c3ddb757f1f4ee84c3"
+dependencies = [
+ "libc",
+ "log",
+]
 
 [[package]]
 name = "serde"
