@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.3.0](https://github.com/majksa-dev/rust-io/compare/v0.2.2...v0.3.0) (2024-07-08)
+
+
+### Features
+
+* add read exact variant ([2cd7ab6](https://github.com/majksa-dev/rust-io/commit/2cd7ab6e616dc0b6b0b4f7162339351c670a2cbf))
+
+
+### Bug Fixes
+
+* **deps:** bump serde from 1.0.203 to 1.0.204 ([9a12c6b](https://github.com/majksa-dev/rust-io/commit/9a12c6b3d1076f0b5f0a798be00e0ee2b8485aa9))
+* **deps:** bump serde_json from 1.0.117 to 1.0.120 ([ee6a466](https://github.com/majksa-dev/rust-io/commit/ee6a4661bedcd26473fd6dcad5214411155652c9))
+* **sendfile:** would block should timeout the future ([de90588](https://github.com/majksa-dev/rust-io/commit/de905883369a1e7239e92da5e04c04dddef8d729))
+* tcp copy ([adfebbc](https://github.com/majksa-dev/rust-io/commit/adfebbc0aa539ae0fe89dceb527bddba5ac3e41e))
+
 ## [0.2.2](https://github.com/majksa-dev/rust-io/compare/v0.2.1...v0.2.2) (2024-06-22)
 
 
