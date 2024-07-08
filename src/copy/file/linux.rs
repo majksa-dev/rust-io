@@ -107,9 +107,3 @@ fn sendfile_n(r: i32, w: i32, offset: &mut usize, n: usize) -> isize {
     *offset = inner_offset as usize;
     result
 }
-
-fn is_wouldblock() -> bool {
-    use libc::{EAGAIN, EWOULDBLOCK};
-    let errno = unsafe { *libc::__errno_location() };
-    errno == EWOULDBLOCK || errno == EAGAIN
-}

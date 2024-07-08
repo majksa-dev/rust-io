@@ -1,13 +1,52 @@
-use std::env;
+use std::{env, io::{self, Error}};
 
+use essentials::debug;
 use futures_util::future::join_all;
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
-    net::TcpListener,
+    net::TcpListener, task::JoinError,
 };
 
 #[tokio::test]
 async fn copy_tcp() {
+    env::set_var("RUST_LOG", "debug");
+    env::set_var("APP_ENV", "d");
+    essentials::install();
+    let mock_listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let mock_addr = mock_listener.local_addr().unwrap();
+    tokio::spawn(async move {
+        let (mut server, _) = mock_listener.accept().await.unwrap();
+        let mut buf = [0; 1024];
+        let n = server.read(&mut buf).await.unwrap();
+        assert_eq!(&buf[..n], b"hello");
+        server.write_all(b"hi").await.unwrap();
+        server.shutdown().await.unwrap();
+        debug!("server responded!");
+    });
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let addr = listener.local_addr().unwrap();
+    tokio::spawn(async move {
+        let (mut left_rx, mut left_tx) = listener.accept().await.unwrap().0.into_split();
+        let (mut right_rx, mut right_tx) = tokio::net::TcpStream::connect(&mock_addr)
+            .await
+            .unwrap()
+            .into_split();
+        join_all([
+            tokio::spawn(async move { ::io::copy_tcp(&mut left_rx, &mut right_tx, None).await }),
+            tokio::spawn(async move { ::io::copy_tcp(&mut right_rx, &mut left_tx, None).await }),
+        ])
+        .await;
+    });
+    let mut client = tokio::net::TcpStream::connect(&addr).await.unwrap();
+    client.write_all(b"hello").await.unwrap();
+    client.shutdown().await.unwrap();
+    let mut buf = [0; 1024];
+    let n = client.read(&mut buf).await.unwrap();
+    assert_eq!(&buf[..n], b"hi");
+}
+
+#[tokio::test]
+async fn copy_tcp_long() {
     env::set_var("RUST_LOG", "debug");
     env::set_var("APP_ENV", "d");
     essentials::install();
@@ -32,13 +71,15 @@ async fn copy_tcp() {
             .unwrap()
             .into_split();
         join_all([
-            tokio::spawn(async move { ::io::copy_tcp(&mut left_rx, &mut right_tx, None).await }),
-            tokio::spawn(async move { ::io::copy_tcp(&mut right_rx, &mut left_tx, None).await }),
+            tokio::spawn(async move { ::io::copy_tcp(&mut left_rx, &mut right_tx, None).await.unwrap() }),
+            tokio::spawn(async move { ::io::copy_tcp(&mut right_rx, &mut left_tx, None).await.unwrap() }),
         ])
-        .await;
+        .await.into_iter().collect::<Result<Vec<_>, JoinError>>().unwrap();
+        debug!("finished copying");
     });
     let mut client = tokio::net::TcpStream::connect(&addr).await.unwrap();
     client.write_all(b"hello").await.unwrap();
+    client.shutdown().await.unwrap();
     let mut len = 0;
     let mut buf = [0; 1024];
     loop {
@@ -50,41 +91,6 @@ async fn copy_tcp() {
     }
     // 20 MB file
     assert_eq!(len, 20 * 1024 * 1024);
-}
-
-#[tokio::test]
-async fn copy_tcp_long() {
-    env::set_var("RUST_LOG", "debug");
-    env::set_var("APP_ENV", "d");
-    essentials::install();
-    let mock_listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-    let mock_addr = mock_listener.local_addr().unwrap();
-    tokio::spawn(async move {
-        let (mut server, _) = mock_listener.accept().await.unwrap();
-        let mut buf = [0; 1024];
-        let n = server.read(&mut buf).await.unwrap();
-        assert_eq!(&buf[..n], b"hello");
-        server.write_all(b"").await.unwrap();
-    });
-    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-    let addr = listener.local_addr().unwrap();
-    tokio::spawn(async move {
-        let (mut left_rx, mut left_tx) = listener.accept().await.unwrap().0.into_split();
-        let (mut right_rx, mut right_tx) = tokio::net::TcpStream::connect(&mock_addr)
-            .await
-            .unwrap()
-            .into_split();
-        join_all([
-            tokio::spawn(async move { ::io::copy_tcp(&mut left_rx, &mut right_tx, None).await }),
-            tokio::spawn(async move { ::io::copy_tcp(&mut right_rx, &mut left_tx, None).await }),
-        ])
-        .await;
-    });
-    let mut client = tokio::net::TcpStream::connect(&addr).await.unwrap();
-    client.write_all(b"hello").await.unwrap();
-    let mut buf = [0; 1024];
-    let n = client.read(&mut buf).await.unwrap();
-    assert_eq!(&buf[..n], b"hi");
 }
 
 #[tokio::test]
