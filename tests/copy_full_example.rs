@@ -35,7 +35,9 @@ async fn copy_full() {
             .into_split();
         join_all([
             tokio::spawn(async move {
-                ::io::copy_tcp(&mut left_rx, &mut right_tx, None).await.unwrap();
+                ::io::copy_tcp(&mut left_rx, &mut right_tx, None)
+                    .await
+                    .unwrap();
                 debug!("copied left -> right");
                 right_tx.shutdown().await?;
                 Ok::<(), std::io::Error>(())
@@ -96,7 +98,9 @@ async fn copy_full_exact() {
             .into_split();
         join_all([
             tokio::spawn(async move {
-                ::io::copy_tcp(&mut left_rx, &mut right_tx, None).await.unwrap();
+                ::io::copy_tcp(&mut left_rx, &mut right_tx, None)
+                    .await
+                    .unwrap();
                 debug!("copied left -> right");
                 right_tx.shutdown().await?;
                 Ok::<(), std::io::Error>(())

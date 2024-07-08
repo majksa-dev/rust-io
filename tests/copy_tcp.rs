@@ -1,10 +1,11 @@
-use std::{env, io::{self, Error}};
+use std::env;
 
 use essentials::debug;
 use futures_util::future::join_all;
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
-    net::TcpListener, task::JoinError,
+    net::TcpListener,
+    task::JoinError,
 };
 
 #[tokio::test]
@@ -58,7 +59,7 @@ async fn copy_tcp_long() {
         let n = server.read(&mut buf).await.unwrap();
         assert_eq!(&buf[..n], b"hello");
         let chunk = [b'x'; 1024].as_slice();
-        for _ in 0..(20*1024) {
+        for _ in 0..(20 * 1024) {
             server.write_all(chunk).await.unwrap();
         }
     });
@@ -71,10 +72,21 @@ async fn copy_tcp_long() {
             .unwrap()
             .into_split();
         join_all([
-            tokio::spawn(async move { ::io::copy_tcp(&mut left_rx, &mut right_tx, None).await.unwrap() }),
-            tokio::spawn(async move { ::io::copy_tcp(&mut right_rx, &mut left_tx, None).await.unwrap() }),
+            tokio::spawn(async move {
+                ::io::copy_tcp(&mut left_rx, &mut right_tx, None)
+                    .await
+                    .unwrap()
+            }),
+            tokio::spawn(async move {
+                ::io::copy_tcp(&mut right_rx, &mut left_tx, None)
+                    .await
+                    .unwrap()
+            }),
         ])
-        .await.into_iter().collect::<Result<Vec<_>, JoinError>>().unwrap();
+        .await
+        .into_iter()
+        .collect::<Result<Vec<_>, JoinError>>()
+        .unwrap();
         debug!("finished copying");
     });
     let mut client = tokio::net::TcpStream::connect(&addr).await.unwrap();
