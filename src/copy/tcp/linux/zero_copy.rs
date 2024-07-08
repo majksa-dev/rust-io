@@ -4,9 +4,6 @@ use std::marker::PhantomData;
 use std::os::unix::io::{AsRawFd, RawFd};
 use std::pin::Pin;
 use std::task::{ready, Context, Poll};
-
-use essentials::debug;
-use libc;
 use tokio::io::{AsyncRead, AsyncWrite, Interest};
 
 /// the size of PIPE_BUF
