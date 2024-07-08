@@ -16,9 +16,9 @@ To use `rust-io`, add the following to your Cargo.toml:
 
 ```toml
 [dependencies]
-io = { tag = "0.2.2", git = "https://github.com/majksa-dev/rust-io" }
+io = { tag = "0.3.0", git = "https://github.com/majksa-dev/rust-io" }
 ```
 
-or simply run `cargo add --git https://github.com/majksa-dev/rust-io --tag 0.2.2`
+or simply run `cargo add --git https://github.com/majksa-dev/rust-io --tag 0.3.0`
 
 <!-- x-release-please-end -->
