@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-essentials = { tag = "0.3.6", git = "https://github.com/majksa-dev/rust-essentials", features = ["all"]}
+essentials = { tag = "0.3.7", git = "https://github.com/majksa-dev/rust-essentials", features = ["all"]}
 chrono = { version = "0.4.38", default-features = false, features = ["clock", "serde"] }
 derive_more = "0.99.18"
 futures-util = { version = "0.3.30", default-features = false, features = ["std"] }
